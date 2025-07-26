@@ -1,0 +1,41 @@
+* {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial,
+    sans-serif;
+}
+
+:root {
+  --text-color: #cfcfcf;
+
+  --background-color: #222222;
+  --secondary-background-color: #212121;
+  --profile-background-color: #141414;
+
+  --main-navbar-color: #171717;
+
+  --highlight-color: grey;
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+p {
+  color: var(--text-color);
+  font-size: clamp(1rem, 1vw, 1.3rem);
+}
+
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Modal {
+  backdrop-filter: blur(20px);
+
+  display: flex;
+  align-self: center;
+}
+
+.apexcharts-menu-item {
+  color: black;
+}
