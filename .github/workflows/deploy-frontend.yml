@@ -1,0 +1,60 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Deploy to Production
+permissions:
+  contents: read
+
+on: 
+  push:
+    branches: [main]
+    paths:
+      - "frontend/src/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: [24.2]
+        python-version: [3.13]
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm i 
+
+    - name: Create env file
+      run: |
+        touch .env
+        echo VITE_MACROTRACKER_API_WEB_URL=${{ secrets.MACROTRACKER_API_WEB_URL }} >> .env
+        echo VITE_MACROTRACKER_API_KEY=${{ secrets.MACROTRACKER_API_KEY }} >> .env
+        echo VITE_KASSAL_API_KEY=${{ secrets.KASSAL_API_KEY }} >> .env
+
+    - name: Building the Project
+      run: npm run build
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Setup Python environment and install ftpretty
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install ftpretty
+
+    - name: Deploy with FTP
+      run: |
+        source venv/bin/activate
+        python ftp.py
+      env:
+        HOST: ${{ secrets.DEPLOY_HOST }}
+        USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+        PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
