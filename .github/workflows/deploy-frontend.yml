@@ -58,7 +58,7 @@ jobs:
 
     - name: Deploy with FTP
       run: |
-        venv/bin/python ftp_client.py dist /public_html/MacroTracker/
+        venv/bin/python ftp_client.py dist /public_html/MacroTracker/ --js-bundle
       env:
         HOST: ${{ secrets.DEPLOY_HOST }}
         USERNAME: ${{ secrets.DEPLOY_USERNAME }}
