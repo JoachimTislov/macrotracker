@@ -31,7 +31,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: frontend/package-lock.json
-    - run: npm i 
+    - run: npm i
 
     - name: Create env file
       run: |
@@ -42,22 +42,23 @@ jobs:
 
     - name: Building the Project
       run: npm run build
-      
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Setup Python environment and install ftpretty
       run: |
         python -m venv venv
-        source venv/bin/activate
-        pip install ftpretty
+        venv/bin/pip install ftpretty argparse
+
+    - name: Fetch deployment script
+      run: curl -O https://raw.githubusercontent.com/JoachimTislov/common-tools/main/ftp/ftp_client.py
 
     - name: Deploy with FTP
       run: |
-        source venv/bin/activate
-        python ftp.py
+        venv/bin/python ftp_client.py dist /public_html/MacroTracker/
       env:
         HOST: ${{ secrets.DEPLOY_HOST }}
         USERNAME: ${{ secrets.DEPLOY_USERNAME }}
